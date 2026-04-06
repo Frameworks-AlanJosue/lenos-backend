@@ -1,0 +1,89 @@
+### ✅ Health check — el servidor responde
+GET http://localhost:3000
+
+###
+
+### 📦 Ver todos los productos
+GET http://localhost:3000/api/productos
+
+###
+
+### 🔍 Filtrar por sabor
+GET http://localhost:3000/api/productos?sabor=Chocolate
+
+###
+
+### ➕ Crear un producto
+POST http://localhost:3000/api/productos
+Content-Type: application/json
+
+{
+  "nombre": "Leño de Prueba",
+  "descripcion": "Crujiente por fuera, suave por dentro",
+  "sabor": "Chocolate",
+  "precio": 45,
+  "stock": 10,
+  "destacado": true
+}
+
+###
+
+### 🛒 Crear pedido — Mismo día
+POST http://localhost:3000/api/pedidos
+Content-Type: application/json
+
+{
+  "cliente": {
+    "nombre": "Ana Ramírez",
+    "telefono": "4421234567",
+    "direccion": "Calle Hidalgo 123, Centro"
+  },
+  "items": [
+    { "productoId": "69d3163f540245a5ed384efc", "cantidad": 2 }
+  ],
+  "tipoPedido": "mismo_dia"
+}
+
+###
+
+### 📅 Crear pre-pedido
+POST http://localhost:3000/api/pedidos
+Content-Type: application/json
+
+{
+  "cliente": {
+    "nombre": "Luis Torres",
+    "telefono": "4429876543",
+    "direccion": "Av. Constitución 45"
+  },
+  "items": [
+    { "productoId": "69d3150e01fc73cc47d3f5e1", "cantidad": 3 }
+  ],
+  "tipoPedido": "pre_pedido",
+  "fechaEntregaSolicitada": "2026-05-01"
+}
+
+###
+
+### 📋 Ver todos los pedidos
+GET http://localhost:3000/api/pedidos
+
+###
+
+### 🔄 Cambiar estado de un pedido
+PATCH http://localhost:3000/api/pedidos/69d323836cc7f2cbd1a7af97/estado
+Content-Type: application/json
+
+{
+  "estado": "confirmado"
+}
+
+###
+
+### 📊 Resumen de inventario
+GET http://localhost:3000/api/inventario/resumen
+
+###
+
+### 👥 Ver usuarios (admin y repartidores)
+GET http://localhost:3000/api/usuarios
