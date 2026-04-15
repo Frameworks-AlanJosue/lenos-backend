@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # ─────────────────────────────────────────────────────────
+  # Servicio: app-logic (Node.js Backend)
+  # ─────────────────────────────────────────────────────────
+  app-logic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lenos-backend
+    restart: unless-stopped
+    # NO expone puertos al host, solo accesible internamente
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=desweb
+      - MONGODB_URI=${MONGODB_URI}
+    networks:
+      - lenos-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────────────────────
+  # Servicio: web-server (Nginx Reverse Proxy)
+  # ─────────────────────────────────────────────────────────
+  web-server:
+    image: nginx:alpine
+    container_name: lenos-nginx
+    restart: unless-stopped
+    ports:
+      # Solo Nginx expone puertos al mundo exterior
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Configuración de Nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Certificados SSL
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      app-logic:
+        condition: service_healthy
+    networks:
+      - lenos-network
+
+# ────────────────────────────────────────────────────────────
+# Red interna de Docker (aislada)
+# ────────────────────────────────────────────────────────────
+networks:
+  lenos-network:
+    driver: bridge
+    internal: false
