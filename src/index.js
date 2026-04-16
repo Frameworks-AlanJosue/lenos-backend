@@ -38,8 +38,16 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Permitir peticiones sin origen (como scripts locales o curl) en desarrollo
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // Permitir si: 
+    // 1. No hay origen (curl, postman, etc)
+    // 2. Es localhost
+    // 3. Es un subdominio de Vercel (.vercel.app)
+    // 4. Coincide exactamente con FRONTEND_URL
+    const isLocal = !origin || origin.includes("localhost") || origin.includes("127.0.0.1");
+    const isVercel = origin && origin.endsWith(".vercel.app");
+    const isAllowedCustom = origin === process.env.FRONTEND_URL;
+
+    if (isLocal || isVercel || isAllowedCustom) {
       callback(null, true);
     } else {
       callback(new Error('Acceso bloqueado por política de CORS'));
