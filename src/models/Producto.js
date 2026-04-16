@@ -15,7 +15,10 @@ const productoSchema = new mongoose.Schema(
     sabor: {
       type: String,
       required: [true, "El sabor es obligatorio"],
-      enum: ["Chocolate", "Nuez", "Cajeta", "Mixto"],
+      enum: [
+        "Chocolate", "Nuez", "Cajeta", "Mixto", "Pastelera", "Fresa", "Nutella", "Oreo", "Arequipe",
+        "Pastor", "Picadillo", "Jamon", "Hawaiano", "Bistec", "Suadero"
+      ],
     },
     precio: {
       type: Number,
